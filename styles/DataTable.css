@@ -29,7 +29,7 @@
 
 .DataTable .DataTable-table {
 	margin: 0;
-	padding: 0 0 55px 0;
+	padding: 0 0 65px 0;
 }
 
 .DataTable .DataTable-heading {
@@ -50,6 +50,12 @@
 
 .DataTable .DataTable-heading.is-fixed + .DataTable-row {
   padding-top: 45px;
+}
+
+.DataTable .DataTable-description {
+	color: rgba(255,255,255,0.4);
+	font-size: 10px;
+	display: block;
 }
 
 .DataTable .DataTable-table .DataTable-heading > div{
@@ -132,6 +138,11 @@
 
 .DataTable .DataTable-row .is-aux:after {
 	content: 'AUX';
+}
+
+.DataTable .DataTable-priority {
+	font-weight: bold;
+	text-align: center;
 }
 
 .DataTable .DataTable-controls {

@@ -12,7 +12,10 @@
                 <div>Viáticos</div>
                 <div>Objetivo</div>
                 <div>Diferencia</div>
-                <div>Compensación por licencia</div>
+                <div>
+                    Compensaciones 
+                    <span class="DataTable-description">(Licencia, Plan, Ingreso)</span>
+                </div>
                 <div>Diferencia Neta</div>
                 <div show="{ showTempIndex }">Temp Index</div>
                 <div>Prioridad</div>
@@ -28,7 +31,12 @@
                 <div>{ tcp.planPlus }</div>
                 <div>{ tcp.netDif }</div>
                 <div show="{ showTempIndex }">{ tcp.tempIndex }</div>
-                <div>{ tcp.priorityIndex }</div>
+                <div class="DataTable-priority">
+                    <span class="badge" 
+                        style="background-color: { colorScale(tcp.priorityIndex) }">
+                        { tcp.priorityIndex }
+                    </span>
+                </div>
 
                 <div if="{ tcp.isBlocked }" class="DataTable-tooltip">
                     Realizó un viaje dentro de los últimos {blockLimit} días
@@ -140,17 +148,21 @@
             tcpList.forEach(function(tcp) {
                 //set planPlus (average of viaticos to be added to the real viaticos) 
                 var planPlus = 0;
+                var dailyAverage = this.getDailyAverage(tcp);
                 if(tcp.licenciaplanactivo === 'TRUE') {
-                    var dailyAverage = getDailyAverage(tcp);
                     var planDuration = monthDiff(tcp.iniciolicenciaplan, today);
                     planPlus += dailyAverage * planDuration;
                 }
 
                 var hasPreviousPlan = !isNaN(parseInt(tcp.totallicenciasplanes));
                 if(hasPreviousPlan) {
-                    var dailyAverage = this.getDailyAverage(tcp);
                     planPlus += dailyAverage * tcp.totallicenciasplanes;
                 }
+
+                if(monthDiff(tcp.ingreso, today) < monthDiff(startDate, today)) {
+                    var startDif = monthDiff(startDate, today) - monthDiff(tcp.ingreso, today);
+                    planPlus += dailyAverage * startDif;
+                } 
                 
                 tcp.planPlus = planPlus;
 
@@ -232,6 +244,12 @@
                 this.tcpList = $.extend(true, [], this._tcpList);
                 this.update();
             }
+        }
+
+        this.colorScale = function(value) {
+            return d3.scaleLinear().domain([0,100])
+                .interpolate(d3.interpolateHcl)
+                .range([d3.rgb('#1eaa3c'), d3.rgb('#aa1e1e')])(value);
         }
 
         function checkName(tcp, query) {
