@@ -2,7 +2,8 @@
     'use strict';
 
     var andes = window.andes = $.extend(window.andes, {
-        data:null,
+        data: null,
+        config: null,
 
         init: function() {
             
@@ -41,14 +42,29 @@
         getSheetJSON: function(callback) {
             var SHEET_ID = '1Smi_r5s0XwXTEjiMZTabVVFLZFef23BkxpXicIjoe6A';
             var PROXY = 'https://cors-anywhere.herokuapp.com/';
-            $.getJSON('https://spreadsheets.google.com/feeds/list/' + SHEET_ID + '/od6/public/values?alt=json', function(data) {    
-                //console.log(data.feed.entry);
-                andes.processAndSetData(data.feed.entry);
-                callback();
-            });
+            var urlData = 'https://spreadsheets.google.com/feeds/list/' + SHEET_ID + '/1/public/full?alt=json';
+            var urlConfig = 'https://spreadsheets.google.com/feeds/list/' + SHEET_ID + '/2/public/full?alt=json';
+            
+            $.getJSON(urlConfig, function(config) {
+                //console.log(config.feed.entry)
+                andes.processAndSetData(config.feed.entry, 'config');
+
+                $.getJSON(urlData, function(data) {    
+                    //console.log(data.feed.entry);
+                    andes.processAndSetData(data.feed.entry, 'data');
+                    callback();
+                });
+            })
+                
         },
 
-        processAndSetData: function(googleFeed) {
+        processAndSetConfig: function(googleFeed) {
+            var COL_PREFIX = 'gsx$';
+            var CELL_PREFIX = '$t';
+            console.log(googleFeed);
+        },
+
+        processAndSetData: function(googleFeed, propertyName) {
             var COL_PREFIX = 'gsx$';
             var CELL_PREFIX = '$t';
             var data = [];
@@ -59,13 +75,52 @@
                     var isValidCol = column.indexOf(COL_PREFIX) >= 0;
                     if(isValidCol) {
                         var property = column.substr(COL_PREFIX.length);
-                        cleanRow[property] = row[column][CELL_PREFIX];
+                        
+                        var value;
+
+                        //parse values
+                        switch(property) {
+                            //dates
+                            case 'ingreso':
+                            case 'ingresojefa':
+                            case 'iniciolicenciaplan':
+                            case 'ultimovuelo':
+                            case 'fechainicio':
+                                if(row[column][CELL_PREFIX].length > 0) {
+                                    var dateParts = row[column][CELL_PREFIX].split("/");
+                                    // month is 0-based, that's why we need dataParts[1] - 1
+                                    value = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+                                } else {
+                                    value = null;
+                                }
+                                break;
+                            
+                            //numbers
+                            case 'grupo':
+                            case 'totallicenciasplanes':
+                            case 'viaticos':
+                            case 'diferenciaentregrupos':
+                            case 'ocultarpor':
+                            case 'ultimogrupojefas':
+                                value = row[column][CELL_PREFIX].length > 0 ? parseInt(row[column][CELL_PREFIX]) : null;
+                                break;
+
+                            //boolean
+                            case 'licenciaplanactivo':
+                                value = eval(row[column][CELL_PREFIX].toLowerCase());
+                                break;
+
+                            default:
+                                value = row[column][CELL_PREFIX];
+                        }
+
+                        cleanRow[property] = value;
                     }
                 }
                 data.push(cleanRow);
             }
             //console.log(data);
-            this.data = data;
+            this[propertyName] = data;
         }
     });
 

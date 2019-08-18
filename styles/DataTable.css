@@ -1,0 +1,174 @@
+.DataTable {
+
+}
+
+.DataTable .DataTable-header {
+	padding: 5px 15px;
+	display: flex;
+	justify-content: space-between;
+	background: white;
+}
+
+.DataTable .DataTable-header h1{
+	margin: 0;
+	font-size: 18px;
+	text-transform: uppercase;
+}
+
+.DataTable .DataTable-header h1 span{
+	margin: 0;
+	font-size: 12px;
+	text-transform: uppercase;
+	color: gray;
+	font-weight: normal;
+}
+
+.DataTable .DataTable-header img{
+	height: 20px;
+}
+
+.DataTable .DataTable-table {
+	margin: 0;
+	padding: 0 0 55px 0;
+}
+
+.DataTable .DataTable-heading {
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 12px;
+	background: #aa1e1e;
+	color: #fff;
+	height: 45px;
+}
+
+.DataTable .DataTable-heading.is-fixed {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 10;
+}
+
+.DataTable .DataTable-heading.is-fixed + .DataTable-row {
+  padding-top: 45px;
+}
+
+.DataTable .DataTable-table .DataTable-heading > div{
+	border-right: 1px solid #fff;
+}
+
+.DataTable .DataTable-table li {
+    display: flex;
+    border-bottom:1px solid gray;
+}
+
+.DataTable .DataTable-table li.is-selected {
+    background: #77b3db;
+}
+
+.DataTable .DataTable-table li > div {
+    flex: 1;
+    padding: 5px;
+    border-right: 1px solid gray;
+}
+
+.DataTable .DataTable-row {
+	position: relative;
+}
+
+.DataTable .DataTable-row.odd {
+	background: rgba(225, 225, 225, 0.4);
+}
+
+.DataTable .DataTable-row.even {
+	background: rgba(195, 195, 195, 0.4);
+}
+
+.DataTable .DataTable-row:hover {
+	background: rgba(255, 255, 255, 0.5);
+}
+
+.DataTable .DataTable-row.is-blocked div {
+	opacity: 0.5;
+}
+
+.DataTable .DataTable-row.is-blocked .DataTable-tooltip {
+	position: absolute;
+    top: -20px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    border-radius: 10px;
+    border: none;
+    opacity: 1;
+    font-size: 12px;
+    padding: 5px 10px;
+    display: none;
+}
+
+.DataTable .DataTable-row.is-blocked:hover .DataTable-tooltip {
+	display: block;
+}
+
+.DataTable .DataTable-row.is-blocked .DataTable-tooltip .arrow-down {
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 7px solid rgba(0,0,0,0.8);
+    position: absolute;
+    bottom: -7px;
+    opacity: 1;
+}
+
+.DataTable .DataTable-row .is-jefa:after,
+.DataTable .DataTable-row .is-aux:after {
+	font-size: 10px;
+    color: gray;
+    margin-left: 5px;
+}
+
+.DataTable .DataTable-row .is-jefa:after {
+	content: 'JEFA';
+}
+
+.DataTable .DataTable-row .is-aux:after {
+	content: 'AUX';
+}
+
+.DataTable .DataTable-controls {
+	position: fixed;
+	bottom: 0;
+	width: 100vw;
+	background: #fff;
+	padding: 15px;
+	box-shadow: 0 0 7px rgba(0,0,0,0.5);
+	display: flex;
+}
+
+.DataTable .DataTable-controls label {
+	background: #fff;
+    border: 2px solid #3286b8;
+    border-radius: 5px;
+    padding: 3px 10px;
+    color: #3286b8;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.DataTable .DataTable-controls label:hover {
+	background: #3286b8;
+	color: #fff;
+}
+
+
+.DataTable .DataTable-controls input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.DataTable .DataTable-controls input[type="text"] {
+	border-radius: 5px;
+    border: 1px solid gray;
+    height: 30px;
+    padding: 0 10px;
+    width: 230px;
+    font-size: 14px;
+}
