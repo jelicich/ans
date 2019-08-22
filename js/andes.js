@@ -124,5 +124,7 @@
         }
     });
 
+    window.riot.observable(andes);
+
     $(document).ready(andes.init.bind(andes));
 })();
