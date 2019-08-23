@@ -21,7 +21,7 @@
                 <div>Prioridad</div>
             </li>
             <li each="{ tcp, idx in tcpList }" 
-                show="{ (tcp.jefa && showJefas) || (!tcp.jefa && showAux) }" class="DataTable-row { 'is-blocked': tcp.isBlocked } { idx % 2 ? 'even' : 'odd' }"
+                show="{ (tcp.jefa && showJefas) || (!tcp.jefa && showAux) }" class="DataTable-row { 'is-blocked': tcp.isBlocked || tcp.inactiva } { idx % 2 ? 'even' : 'odd' }"
                 onclick="{ toggleSelect }">
                 <div>{ tcp.nombre }</div>
                 <div class="{ tcp.jefa ? 'is-jefa' : 'is-aux' }">{ tcp.grupo }</div>
@@ -40,6 +40,11 @@
 
                 <div if="{ tcp.isBlocked }" class="DataTable-tooltip">
                     Realizó un viaje dentro de los últimos {blockLimit} días
+                    <div class="arrow-down"></div>
+                </div>
+
+                <div if="{ tcp.inactiva }" class="DataTable-tooltip">
+                    TCP Inactiva
                     <div class="arrow-down"></div>
                 </div>
             </li>
@@ -69,6 +74,7 @@
         var startDate = andes.config[0].fechainicio; // date in which viaticos are being monitored
         var monthDiffViaticos = monthDiff(startDate, today);
         var lastJefasGroup = andes.config[0].ultimogrupojefas;
+        var targetForNewTcp = andes.config[0].objetivonuevatcp;
         this.blockLimit = andes.config[0].ocultarpor;
         var scaleGroup;
 
@@ -85,6 +91,7 @@
             sortList(this._tcpList, 'priorityIndex');
             this.tcpList = $.extend(true, [], this._tcpList);
             this.update();
+            console.log(this.tcpList);
 
             // fix headings
             window.onscroll = function() {fixHeadings()};
@@ -146,29 +153,37 @@
          */
         this.evaluateData = function(tcpList) {
             tcpList.forEach(function(tcp) {
+                //copy group target to tcp object 
+                tcp.groupTarget = this.groups[tcp.grupo-1].target;
+
                 //set planPlus (average of viaticos to be added to the real viaticos) 
                 var planPlus = 0;
-                var dailyAverage = this.getDailyAverage(tcp);
-                if(tcp.licenciaplanactivo === 'TRUE') {
+                var monthlyAverage = this.getMonthlyAverage(tcp);
+                if(tcp.licenciaplanactivo) {
                     var planDuration = monthDiff(tcp.iniciolicenciaplan, today);
-                    planPlus += dailyAverage * planDuration;
+                    planPlus += monthlyAverage * planDuration;
                 }
 
                 var hasPreviousPlan = !isNaN(parseInt(tcp.totallicenciasplanes));
                 if(hasPreviousPlan) {
-                    planPlus += dailyAverage * tcp.totallicenciasplanes;
+                    planPlus += monthlyAverage * tcp.totallicenciasplanes;
                 }
 
                 if(monthDiff(tcp.ingreso, today) < monthDiff(startDate, today)) {
                     var startDif = monthDiff(startDate, today) - monthDiff(tcp.ingreso, today);
-                    planPlus += dailyAverage * startDif;
+                    planPlus += monthlyAverage * startDif;
+
+                    //set target to 0.8 * month when tcp.ingreso is lower than a year
+                    if(monthDiff(tcp.ingreso, today) < 12) {
+                        tcp.groupTarget = targetForNewTcp * monthDiff(tcp.ingreso, today);
+                        tcp.dif = tcp.groupTarget - tcp.viaticos;
+                        console.log(tcp)
+                    } 
                 } 
                 
-                tcp.planPlus = planPlus;
+                tcp.planPlus = planPlus.toFixed(2);
 
-                tcp.groupTarget = this.groups[tcp.grupo-1].target;
-
-                tcp.netDif = tcp.dif - planPlus;
+                tcp.netDif = (tcp.dif - planPlus).toFixed(2);
 
                 tcp.tempIndex = (tcp.dif - planPlus) * (1 + scaleGroup(tcp.grupo));
 
@@ -195,20 +210,25 @@
             .range([0, 100]);
 
             tcpList.forEach(function(tcp) {
-                tcp.priorityIndex = Math.round(scale(tcp.tempIndex));
-                //tcp.tempIndex = Math.round(scale(tcp.tempIndex));
+                if(!tcp.inactiva) {
+                    tcp.priorityIndex = Math.round(scale(tcp.tempIndex));
+                    //tcp.tempIndex = Math.round(scale(tcp.tempIndex));
+                } else {
+                    tcp.priorityIndex = 0;
+                }
+                
             })
         }
 
         /**
-         * get daily viaticos average by tcp and their group
+         * get monthly viaticos average by tcp and their group
          * @param {Object} tcp - tcp row object
          */
-        this.getDailyAverage = function(tcp) {
+        this.getMonthlyAverage = function(tcp) {
             var g = tcp.grupo - 1;
             var average = (this.groups[g].max + this.groups[g].min) / 2;
-            var dailyAverage = average / monthDiffViaticos;
-            return dailyAverage;
+            var monthlyAverage = average / monthDiffViaticos;
+            return monthlyAverage;
         }
 
         /**

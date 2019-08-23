@@ -102,11 +102,13 @@
                             case 'diferenciaentregrupos':
                             case 'ocultarpor':
                             case 'ultimogrupojefas':
-                                value = row[column][CELL_PREFIX].length > 0 ? parseInt(row[column][CELL_PREFIX]) : null;
+                            case 'objetivonuevatcp':
+                                value = row[column][CELL_PREFIX].length > 0 ? parseFloat(row[column][CELL_PREFIX]) : null;
                                 break;
 
                             //boolean
                             case 'licenciaplanactivo':
+                            case 'inactiva':
                                 value = eval(row[column][CELL_PREFIX].toLowerCase());
                                 break;
 
