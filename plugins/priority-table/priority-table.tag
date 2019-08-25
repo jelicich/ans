@@ -145,10 +145,12 @@
                 this.groups.push({ 
                     target: tempTargetViaticos - DIF_GROUP * i,
                     max: minViaticos,
-                    min: maxViaticos
+                    min: maxViaticos,
+                    average: average
                 });
             }
 
+            //TODO: refactor this and do it all together with the average for
             tcpList.forEach(function(tcp) {
                 //set min max on each group
                 var g = tcp.grupo - 1;
@@ -160,6 +162,15 @@
                 tcp.viaticosTotal = viaticosTotal;
                 tcp.dif = this.groups[g].target - viaticosTotal;
             }.bind(this))
+
+            //add average by group
+            for(var i = 0; i < this.groups.length; i++) {
+                var tcpByGroup = tcpList.filter(function(tcp) {
+                    return tcp.grupo == i + 1;
+                })
+                var average = d3.mean(tcpByGroup, function(d) { return d.viaticosTotal });
+                this.groups[i].average = average;
+            }
         }
 
 

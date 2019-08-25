@@ -4,12 +4,14 @@
 	</div>
 	<style>
 		rect.min, 
-		rect.max {
+		rect.max,
+		rect.average {
 			opacity: 0.3;
 			transition: all 0.5s;
 		}
 		rect.min:hover, 
-		rect.max:hover {
+		rect.max:hover,
+		rect.average:hover {
 			opacity: 1;
 		}
 	</style>
@@ -62,7 +64,7 @@
 			  .rangeRound([innerHeight, 0]);
 
 			const z = d3.scaleOrdinal()
-			  .range(['#aa1e1e', '#3178a7', '#77b3db']);
+			  .range(['#aa1e1e', '#3178a7', '#77b3db', '#dddddd']);
 			    
 			  x0.domain(data.map(function(d,i){ return 'Grupo ' + (i + 1) }));
 			  x1.domain(keys).rangeRound([0, x0.bandwidth()]);
@@ -137,6 +139,9 @@
 			  			break;
 			  		case 'max':
 			  			value = 'Máximo';
+			  			break;
+			  		case 'average':
+			  			value = 'Promedio';
 			  			break;
 			  		default:
 			  			value = d;
