@@ -96,9 +96,12 @@
                                 break;
                             
                             //numbers
+
+                            case 'legajo':
                             case 'grupo':
                             case 'totallicenciasplanes':
-                            case 'viaticos':
+                            case 'viaticosfull':
+                            case 'viaticosparcial':
                             case 'diferenciaentregrupos':
                             case 'ocultarpor':
                             case 'ultimogrupojefas':
@@ -107,8 +110,8 @@
                                 break;
 
                             //boolean
-                            case 'licenciaplanactivo':
-                            case 'inactiva':
+                            case 'licenciaactiva':
+                            case 'planmamaactivo':
                                 value = eval(row[column][CELL_PREFIX].toLowerCase());
                                 break;
 

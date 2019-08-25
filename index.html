@@ -5,19 +5,22 @@
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="styles/base.css">
 	<link rel="stylesheet" type="text/css" href="styles/DataTable.css">
+	<link rel="stylesheet" type="text/css" href="styles/Button.css">
+	<link rel="stylesheet" type="text/css" href="styles/Modal.css">
 </head>
 <body>
 
 	<priority-table tcp-list="{ window.andes.data }">
 	</priority-table>
-	<modal>
-	</modal>
 
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.7/d3.min.js"></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js'></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/riot/3.12.0/riot+compiler.js"></script>
 	<script type="text/javascript" src="js/andes.js"></script>
 
 	<script type="riot/tag" src="plugins/priority-table/priority-table.tag"></script>
+	<script type="riot/tag" src="plugins/modal/modal.tag"></script>
+	<script type="riot/tag" src="plugins/graphic/groups-bar-chart.tag"></script>
 </body>
 </html>

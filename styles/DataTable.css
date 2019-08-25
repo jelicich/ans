@@ -153,33 +153,6 @@
 	padding: 15px;
 	box-shadow: 0 0 7px rgba(0,0,0,0.5);
 	display: flex;
+	box-sizing: border-box;
 }
 
-.DataTable .DataTable-controls label {
-	background: #fff;
-    border: 2px solid #3286b8;
-    border-radius: 5px;
-    padding: 3px 10px;
-    color: #3286b8;
-    cursor: pointer;
-    margin-right: 10px;
-}
-
-.DataTable .DataTable-controls label:hover {
-	background: #3286b8;
-	color: #fff;
-}
-
-
-.DataTable .DataTable-controls input[type="checkbox"] {
-    cursor: pointer;
-}
-
-.DataTable .DataTable-controls input[type="text"] {
-	border-radius: 5px;
-    border: 1px solid gray;
-    height: 30px;
-    padding: 0 10px;
-    width: 230px;
-    font-size: 14px;
-}

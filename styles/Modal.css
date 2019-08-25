@@ -1,7 +1,43 @@
 .Modal {
-	display: none;
+	position: fixed;
+	top: -100vh;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: #fff;
+	z-index: 100;
+	transition: all 0.5s ease 0s;
+	opacity: 0;
 }
 
 .Modal.is-visible {
 	display: block;
+	top: 0;
+	opacity: 1;
+}
+
+.Modal .Modal-header {
+	border-bottom: 1px solid rgba(0,0,0,0.2);
+	position: relative;
+	padding: 10px;
+}
+
+.Modal .Modal-header button {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background: none;
+	border: 1px solid rgba(0,0,0,0.2);
+	border-radius: 5px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.Modal .Modal-header button:hover {
+	background: rgba(0,0,0,0.2);
+}
+
+.Modal .Modal-header h1{
+	font-size: 20px;
+	margin: 0;
 }
