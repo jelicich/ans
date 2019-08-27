@@ -34,7 +34,7 @@
                 </div>
                 <div class="{ tcp.jefa ? 'is-jefa' : 'is-aux' }">{ tcp.grupo }</div>
                 <div>{ tcp.viaticosTotal.toFixed(2) }</div>
-                <div>{ Math.round(tcp.groupTarget) }</div> 
+                <div>{ tcp.groupTarget }</div> 
                 <div>{ tcp.dif.toFixed(2) }</div>
                 <div>{ tcp.planPlus.toFixed(2) }</div>
                 <div>{ tcp.netDif.toFixed(2) }</div>
@@ -143,7 +143,7 @@
             //populate group with dummy data
             for(var i = 0; i < groupsLength; i++) {
                 this.groups.push({ 
-                    target: tempTargetViaticos - DIF_GROUP * i,
+                    target: Math.round(tempTargetViaticos - DIF_GROUP * i),
                     max: minViaticos,
                     min: maxViaticos,
                     average: average
