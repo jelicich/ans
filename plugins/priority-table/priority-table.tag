@@ -107,6 +107,7 @@
         this.showJefas = true;
         this.showAux = true;
         this.showMama = false;
+        this.errorTcp = [];
 
         this.on('mount', function() {
             this._tcpList = $.extend(true, [], opts.tcpList);
@@ -151,7 +152,13 @@
             }
 
             //TODO: refactor this and do it all together with the average for
-            tcpList.forEach(function(tcp) {
+            tcpList.forEach(function(tcp, index, list) {
+                //Validate mandatory fields
+                if(!validateMandatoryFields(tcp)) {
+                    this.errorTcp.push($.extend(true, {}, tcp));
+                    list.splice(index, 1);
+                    return;
+                }   
                 //set min max on each group
                 var g = tcp.grupo - 1;
                 var viaticosTotal = tcp.viaticosfull + ((tcp.viaticosparcial || 0) * valueViaticoParcial);
@@ -171,6 +178,7 @@
                 var average = d3.mean(tcpByGroup, function(d) { return d.viaticosTotal });
                 this.groups[i].average = average;
             }
+            console.log(this.errorTcp);
         }
 
 
@@ -333,6 +341,24 @@
 
         this.showModalCharts = function() {
             this.refs.chartsModal.show()
+        }
+
+        function validateMandatoryFields(tcp) {
+            var error = '';
+            if(!tcp.grupo) {
+                error += 'Grupo Inválido. ';
+            }
+
+            if(!tcp.ingreso) {
+                error += 'Fecha de ingreso Invalida. ';
+            }
+
+            if(error.length > 0) {
+                tcp.error = error; 
+                return false;
+            } else {
+                return true;
+            }
         }
 
         function checkName(tcp, query) {
