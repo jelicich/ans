@@ -5,10 +5,20 @@
     padding: 3px 10px;
     color: #3286b8;
     cursor: pointer;
-    margin-right: 10px;
 }
 
 .Button:hover {
 	background: #3286b8;
+	color: #fff;
+}
+
+.Button-alert {
+    border: 2px solid #eb9d0f;
+    color: #eb9d0f;
+    font-weight: bold;
+}
+
+.Button-alert:hover {
+	background: #eb9d0f;
 	color: #fff;
 }

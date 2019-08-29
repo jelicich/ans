@@ -51,6 +51,10 @@ body.modal-open {
 	margin-left: auto;
 }
 
+.mr-10 {
+	margin-right: 10px;
+}
+
 .text-center {
 	text-align: center;
 }

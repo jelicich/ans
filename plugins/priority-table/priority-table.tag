@@ -58,22 +58,26 @@
             </li>
         </ol> 
         <div class="DataTable-controls">
-            <label class="Button">
+            <label class="Button mr-10">
                 <input type="checkbox" value="showJefas" checked="{ showJefas }" onchange="{ toggleTCP }">
                 Mostrar Jefas
             </label>
 
-            <label class="Button">
+            <label class="Button mr-10">
                 <input type="checkbox" value="showAux" checked="{ showAux }" onchange="{ toggleTCP }">
                 Mostrar Auxiliares
-            </label class="Button">
+            </label class="Button mr-10">
 
-            <label class="Button">
+            <label class="Button mr-10">
                 <input type="checkbox" value="showMama" checked="{ showMama }" onchange="{ toggleMama }">
                 Solo Plan Mamá
             </label>
 
-            <input type="text" name="" placeholder="Filtrar por nombre" onkeyup="{ filter.bind(this) }">
+            <input class="mr-10" type="text" name="" placeholder="Filtrar por nombre" onkeyup="{ filter.bind(this) }">
+            
+            <button if="{ errorTcp.length > 0 }" onclick="{ showErrors }" class="Button Button-alert mr-10" title="Error!">
+                !
+            </button>
 
             <button class="Button ml-auto" onclick="{ showModalCharts }">Info</button>
         </div>
@@ -84,7 +88,20 @@
             <h1>Información extra</h1>
         </yield>
         <yield to="body">
-            <groups-bar-chart data="{ parent.groups }" on-show="{ parent.showChartsModal }"></groups-bar-chart>
+            <groups-bar-chart data="{ parent.groups }"></groups-bar-chart>
+        </yield>
+    </modal>
+
+    <modal if="{ errorTcp.length > 0}" ref="errorsModal">
+        <yield to="header">
+            <h1>Se encontraron los siguientes errores en la hoja de datos.</h1>
+        </yield>
+        <yield to="body">
+            <ul>
+                <li each="{ tcp in parent.errorTcp }">
+                    <strong>{ tcp.nombre }:</strong> {tcp.error}
+                </li>
+            </ul>
         </yield>
     </modal>
         
@@ -117,7 +134,7 @@
             sortList(this._tcpList, 'priorityIndex');
             this.tcpList = $.extend(true, [], this._tcpList);
             this.update();
-            console.log(this.tcpList);
+            console.log('Final list: ', this.tcpList);
 
             // fix headings
             window.onscroll = function() {fixHeadings()};
@@ -145,9 +162,9 @@
             for(var i = 0; i < groupsLength; i++) {
                 this.groups.push({ 
                     target: Math.round(tempTargetViaticos - DIF_GROUP * i),
-                    max: minViaticos,
-                    min: maxViaticos,
-                    average: average
+                    max: null,
+                    min: null,
+                    average: null
                 });
             }
 
@@ -156,14 +173,13 @@
                 //Validate mandatory fields
                 if(!validateMandatoryFields(tcp)) {
                     this.errorTcp.push($.extend(true, {}, tcp));
-                    list.splice(index, 1);
                     return;
                 }   
                 //set min max on each group
                 var g = tcp.grupo - 1;
                 var viaticosTotal = tcp.viaticosfull + ((tcp.viaticosparcial || 0) * valueViaticoParcial);
-                this.groups[g].min = viaticosTotal < this.groups[g].min ? viaticosTotal : this.groups[g].min;
-                this.groups[g].max = viaticosTotal > this.groups[g].max ? viaticosTotal : this.groups[g].max;
+                this.groups[g].min = viaticosTotal < this.groups[g].min || !this.groups[g].min ? viaticosTotal : this.groups[g].min;
+                this.groups[g].max = viaticosTotal > this.groups[g].max || !this.groups[g].max ? viaticosTotal : this.groups[g].max;
 
                 //set dif to tcp
                 tcp.viaticosTotal = viaticosTotal;
@@ -179,6 +195,17 @@
                 this.groups[i].average = average;
             }
             console.log(this.errorTcp);
+
+            var t = this;
+            this._tcpList = tcpList.filter(function(tcp) {
+                var keepInArray = true;
+                for(var i = 0; i < t.errorTcp.length; i++) {
+                    if(tcp.legajo == t.errorTcp[i].legajo) {
+                        keepInArray = false;
+                    }
+                }
+                return keepInArray;
+            })
         }
 
 
@@ -341,6 +368,10 @@
 
         this.showModalCharts = function() {
             this.refs.chartsModal.show()
+        }
+
+        this.showErrors = function() {
+            this.refs.errorsModal.show()
         }
 
         function validateMandatoryFields(tcp) {
